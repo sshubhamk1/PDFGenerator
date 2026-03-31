@@ -1,0 +1,104 @@
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "3000:80" 
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  server:
+    build: .
+    container_name: server
+    command: node server.js
+    ports:
+      - "8000:3000"   # ✅ internal only
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tranzact
+      DB_PASSWORD: secretpassword
+      DB_NAME: pdf_service
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      APP_PORT: 3000
+      APP_NAME: server
+    networks:
+      - app-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    container_name: worker
+    command: node worker.js
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tranzact
+      DB_PASSWORD: secretpassword
+      DB_NAME: pdf_service
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - app-network
+
+  # 🔥 Migration service (runs once, exits)
+  migrate:
+    build: .
+    container_name: migrate
+    command: >
+      sh -c "
+      until nc -z postgres 5432;
+      do
+        echo 'Waiting for Postgres...';
+        sleep 2;
+      done;
+      node migrate.js
+      "
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: tranzact
+      DB_PASSWORD: secretpassword
+      DB_NAME: pdf_service
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:17.7-bookworm
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: tranzact
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: pdf_service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:8.2.2-alpine3.22
+    container_name: redis
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:

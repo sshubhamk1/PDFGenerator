@@ -1,0 +1,36 @@
+{
+  "name": "pdfgenerator",
+  "version": "1.0.0",
+  "description": "A microservice to create PDF(single/batch) based on JSON data",
+  "keywords": [
+    "PDFGenerator",
+    "puppeteer",
+    "microservice"
+  ],
+  "homepage": "https://github.com/sshubhamk1/PDFGenerator#readme",
+  "bugs": {
+    "url": "https://github.com/sshubhamk1/PDFGenerator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sshubhamk1/PDFGenerator.git"
+  },
+  "license": "MIT",
+  "author": "Shubham Kumar",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "bullmq": "^5.71.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "puppeteer": "^24.40.0",
+    "uuid": "^13.0.0",
+    "ws": "^8.20.0"
+  }
+}

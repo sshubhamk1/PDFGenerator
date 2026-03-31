@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Processor</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+    .main {
+      flex: 2;
+      padding: 20px;
+    }
+    .sidebar {
+      flex: 1;
+      border-left: 1px solid #ccc;
+      padding: 20px;
+      background: #f7f7f7;
+      overflow-y: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+    }
+    .log {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="main">
+  <h2>Submit JSON Job</h2>
+  <form id="jsonForm">
+    <textarea id="jsonInput" placeholder='{"key": "value"}'></textarea>
+    <br />
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<div class="sidebar">
+  <h3>Job Updates</h3>
+  <div id="logs"></div>
+</div>
+
+<script>
+  const form = document.getElementById("jsonForm");
+  const jsonInput = document.getElementById("jsonInput");
+  const logsDiv = document.getElementById("logs");
+
+  function addLog(message) {
+    const div = document.createElement("div");
+    div.className = "log";
+    div.innerText = message;
+    logsDiv.prepend(div);
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let jsonData;
+    try {
+        console.log(jsonInput.value)
+      jsonData = JSON.parse(jsonInput.value);
+    } catch (err) {
+      alert("Invalid JSON");
+      return;
+    }
+
+    addLog("Submitting job...");
+
+    try {
+      const response = await fetch("http://localhost:3000/job/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData)
+      });
+
+      const data = await response.json();
+      const jobId = data.jobId;
+
+      addLog("Job created: " + jobId);
+
+      startWebSocket(jobId);
+
+    } catch (err) {
+      addLog("Error submitting job");
+      console.error(err);
+    }
+  });
+
+  function startWebSocket(jobId) {
+    const ws = new WebSocket(`ws://localhost:3000/ws/?jobId=${jobId}`);
+
+    ws.onopen = () => {
+      addLog("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      addLog(
+        `Status: ${data.status} | Progress: ${data.progress ?? "N/A"}`
+      );
+
+      if (data.status === "completed") {
+        addLog("Job completed. Downloading...");
+
+        const downloadUrl = `http://localhost:3000${data.downloadUrl}`;
+
+        // Trigger download
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        ws.close();
+      }
+    };
+
+    ws.onerror = (err) => {
+      addLog("WebSocket error");
+      console.error(err);
+    };
+
+    ws.onclose = () => {
+      addLog("WebSocket closed");
+    };
+  }
+</script>
+
+</body>
+</html>
