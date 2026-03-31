@@ -43,6 +43,15 @@ Handelling spike request, will be favoured most by golang as it will create smal
 
 ### Decision 3: [Node.js based]
 Using puppeteer it will be the best solution, as puppeteer is js library so no extra service need to run to print pdf. for Queue I've used Redis Pub/Sub and bullmq and stored data in postgres, which can be send to S3 on successfully processed.
+#### System design of this approach
+- Overall architecture(Along with existing system)
+![Overall architecture](./docs/Overall%20Architecture.png)
+- Sending request with JSON to server
+![HTTP Request](./docs/Job%20Request.png)
+- Sending websocket to accept progress
+![Websocket](./docs/websocket.png)
+- Corner Cases(Fault Management)
+![Fault Management](./docs/corner%20case.png)
 
 ## 5. AI Usage Log
 - https://chatgpt.com/share/69c92150-70f0-8324-a3cf-e58a685323ea
