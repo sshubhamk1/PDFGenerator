@@ -82,6 +82,9 @@ Once done can be download with the given URL endpoint.
 ## Design of PDF Generator
 ![PDF Generator](docs/PDF%20Generator.png)
 
+## Future Tasks
+- For each pdf, adding tamper proof solution so nobody can forge it.
+
 
 ## Approach and other questions
 [click here](./APPROACH.md)

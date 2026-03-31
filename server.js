@@ -10,10 +10,6 @@ const { WebSocketServer } = require("ws");
 const app = express();
 app.use(express.json({limit: "500mb"}));
 app.use(cors());
-app.use((req, res, next) => {
-  console.log("Incoming:", req.method, req.url);
-  next();
-});
 
 const redis = new Redis({
   host: process.env.REDIS_HOST,
@@ -61,7 +57,6 @@ sub.on("message", (channel, message) => {
 
 /* ---------------- API ---------------- */
 app.post("/job", async (req, res) => {
-    console.log("running job")
     const jobId = uuidv4();
 
     await pg.query(
