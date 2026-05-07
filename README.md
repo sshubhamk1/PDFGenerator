@@ -1,4 +1,35 @@
-# PDF Generator
+**PDF Generator System Overview**
+
+Our PDF Generator system is a robust solution designed to streamline the creation of single or multiple PDFs through HTTP requests, offering efficiency, reliability, and real-time progress updates. Here's a detailed breakdown:
+
+1. **Efficient Processing:**
+   - **Single and Multiple PDF Generation:** Users can generate one or multiple PDFs with a single request. For multiple PDFs, the system zips them into a single response, reducing the number of HTTP requests and simplifying client handling.
+
+2. **Fault-Tolerant and Scalable Architecture:**
+   - **Fault Tolerance:** The system is designed to handle failures gracefully, ensuring continuous operation even if components fail. This redundancy ensures reliability.
+   - **Scalability:** Capable of handling increased traffic by distributing resources through load balancing or distributed computing, making it suitable for growing applications.
+
+3. **Real-Time Progress Updates:**
+   - **WebSocket Integration:** Utilizes WebSocket connections to provide live updates on PDF generation progress. Clients receive real-time feedback, enhancing user experience and transparency.
+
+4. **Features and Functionality:**
+   - **Multiple Input Formats:** Supports various data structures or templates for flexibility in input.
+   - **Error Handling and Reporting:** Provides detailed error messages for troubleshooting.
+   - **Security Measures:** Includes authentication for WebSocket connections and HTTP requests to ensure secure access.
+   - **Integration Capabilities:** Offers API endpoints for seamless integration into applications, catering to developers needing programmatically generated PDFs.
+
+5. **Use Cases:**
+   - Ideal for businesses requiring bulk report generation, such as invoices or receipts, or dynamic content creation in web and mobile applications.
+
+6. **Why Choose Our System?**
+   - **Enhanced Efficiency:** Reduces the number of HTTP requests with zipped multiple PDFs.
+   - **Reliability:** Ensures uninterrupted service with fault-tolerant design.
+   - **User-Friendly:** Real-time progress updates via WebSocket provide a superior user experience.
+
+This system is tailored for developers and businesses seeking a reliable, scalable solution for generating PDFs programmatically. Whether for small-scale projects or large enterprises, it offers the flexibility and performance needed to meet diverse requirements.
+
+
+-------------------------------------------------------------
 
 This service accepts HTTP requests with JSON payloads and creates PDFs from it.
 
